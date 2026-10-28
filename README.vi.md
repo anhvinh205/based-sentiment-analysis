@@ -22,13 +22,81 @@ nên F1 của hai khía cạnh này kém tin cậy.
 
 ## Chạy nhanh
 
-```bash
-python -m venv .venv && source .venv/bin/activate
-make install
-# đặt data_train.csv, data_val.csv, data_test.csv vào data/raw/
-make data && make baseline
-make app        # Streamlit  http://localhost:8501
-make api        # FastAPI    http://localhost:8000/docs
+### Windows (terminal trong VS Code / Command Prompt)
+
+Cần Python 3.11+ và Git. Repository không chứa bộ dữ liệu review hoặc model đã huấn luyện. Hãy lấy
+dữ liệu từ nguồn cho phép bạn sử dụng, đặt ba file chia tập vào `data\raw\`, và đọc
+[DATA_STATEMENT.md](DATA_STATEMENT.md) trước khi chia sẻ dữ liệu.
+
+Chạy các lệnh sau trong terminal Command Prompt:
+
+```cmd
+git clone https://github.com/anhvinh205/based-sentiment-analysis.git
+cd based-sentiment-analysis
+py -3.11 -m venv .venv
+.venv\Scripts\activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev,serve,app,onnx]"
 ```
 
-Huấn luyện transformer: `make install-train && make train-phobert` (nên dùng GPU). Chi tiết xem `README.md`.
+Chép `data_train.csv`, `data_val.csv`, `data_test.csv` vào `data\raw\`, sau đó tiền xử lý dữ liệu và
+huấn luyện baseline:
+
+```cmd
+python -m viabsa.data.prepare --config configs/data.yaml
+python -m viabsa.training.train_baseline --config configs/baseline.yaml
+```
+
+Model được tạo tại `models\baseline`. Mở hai terminal VS Code riêng (mỗi terminal đều kích hoạt
+`.venv`) để chạy API và giao diện:
+
+```cmd
+set VIABSA_MODEL_PATH=models/baseline
+uvicorn viabsa.serving.api:app --reload --port 8000
+```
+
+```cmd
+set VIABSA_MODEL_PATH=models/baseline
+streamlit run app/streamlit_app.py
+```
+
+Mở giao diện tại `http://localhost:8501`; tài liệu API tại `http://localhost:8000/docs`.
+
+### Linux / macOS
+
+```bash
+git clone https://github.com/anhvinh205/based-sentiment-analysis.git
+cd based-sentiment-analysis
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev,serve,app,onnx]"
+# Đặt data_train.csv, data_val.csv, data_test.csv đã được phép sử dụng vào data/raw/
+python -m viabsa.data.prepare --config configs/data.yaml
+python -m viabsa.training.train_baseline --config configs/baseline.yaml
+```
+
+Sau đó mở hai terminal riêng, đặt biến `VIABSA_MODEL_PATH=models/baseline` trong mỗi terminal và
+chạy lệnh API/UI tương ứng ở trên.
+
+### Docker
+
+Trước tiên cần chuẩn bị dữ liệu và huấn luyện baseline như hướng dẫn trên. Docker Compose mount thư
+mục `models/` từ máy host; model không nằm sẵn trong Docker image.
+
+```cmd
+docker compose up --build
+```
+
+API: `http://localhost:8000/docs`; giao diện: `http://localhost:8501`.
+
+### Huấn luyện transformer (tùy chọn)
+
+```bash
+python -m pip install -e ".[train]"
+python -m viabsa.training.train_transformer --config configs/transformer_phobert.yaml
+```
+
+Có thể thay file cấu hình bằng `configs/transformer_xlmr.yaml` hoặc
+`configs/transformer_visobert.yaml`. Nên dùng GPU tương thích CUDA. Hướng dẫn chi tiết hơn ở
+[README tiếng Anh](README.md).

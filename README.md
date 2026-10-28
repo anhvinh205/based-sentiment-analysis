@@ -1,6 +1,6 @@
 # ViABSA — Vietnamese Aspect-Based Sentiment Analysis
 
-[![CI](https://github.com/YOUR_GITHUB_USERNAME/viabsa/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_GITHUB_USERNAME/viabsa/actions/workflows/ci.yml)
+[![CI](https://github.com/anhvinh205/based-sentiment-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/anhvinh205/based-sentiment-analysis/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -68,36 +68,91 @@ occur in the gold labels), then averaged over aspects. Baseline numbers below we
 
 ## Quick start
 
-```bash
-git clone https://github.com/YOUR_GITHUB_USERNAME/viabsa && cd viabsa
-python -m venv .venv && source .venv/bin/activate
-make install                      # package + FastAPI + Streamlit + dev tools
+### Windows (VS Code terminal / Command Prompt)
 
-# put data_train.csv, data_val.csv, data_test.csv in data/raw/  (see DATA_STATEMENT.md)
-make data                         # clean, de-duplicate, remove leakage -> data/processed
-make baseline                     # ~1 minute on CPU, writes models/baseline + reports/
-make app                          # Streamlit on http://localhost:8501
-make api                          # FastAPI on http://localhost:8000/docs
+Requirements: Python 3.11+ and Git. The repository does **not** include the review dataset or trained
+model weights. Get the dataset from a source whose terms allow your use, then place the three split
+files in `data\raw\` as shown below. See [DATA_STATEMENT.md](DATA_STATEMENT.md) before sharing any
+review data.
+
+Run these commands from Command Prompt in the VS Code terminal:
+
+```bash
+git clone https://github.com/anhvinh205/based-sentiment-analysis.git
+cd based-sentiment-analysis
+py -3.11 -m venv .venv
+.venv\Scripts\activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev,serve,app,onnx]"
 ```
+
+Copy `data_train.csv`, `data_val.csv`, and `data_test.csv` into `data\raw\`, then prepare the data
+and train the CPU baseline:
+
+```cmd
+python -m viabsa.data.prepare --config configs/data.yaml
+python -m viabsa.training.train_baseline --config configs/baseline.yaml
+```
+
+The trained model is written to `models\baseline`. Open two VS Code terminals (activate `.venv` in
+each) to run the API and UI:
+
+```cmd
+set VIABSA_MODEL_PATH=models/baseline
+uvicorn viabsa.serving.api:app --reload --port 8000
+```
+
+```cmd
+set VIABSA_MODEL_PATH=models/baseline
+streamlit run app/streamlit_app.py
+```
+
+Open the UI at `http://localhost:8501` and the API docs at `http://localhost:8000/docs`.
+
+### Linux / macOS
+
+```bash
+git clone https://github.com/anhvinh205/based-sentiment-analysis.git
+cd based-sentiment-analysis
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev,serve,app,onnx]"
+# Add the authorized data_train.csv, data_val.csv, data_test.csv to data/raw/
+python -m viabsa.data.prepare --config configs/data.yaml
+python -m viabsa.training.train_baseline --config configs/baseline.yaml
+```
+
+Then start the API and UI in separate terminals, setting
+`VIABSA_MODEL_PATH=models/baseline` in each terminal before running the commands above.
 
 ### Train the transformers
 
 ```bash
-make install-train                # PyTorch, transformers, MLflow, pyvi, ONNX
-make train-phobert                # or: train-xlmr / train-visobert (a GPU is strongly recommended)
-make export-onnx MODEL=models/phobert
-make benchmark MODELS="models/baseline models/phobert models/phobert_onnx"
+python -m pip install -e ".[train]"
+python -m viabsa.training.train_transformer --config configs/transformer_phobert.yaml
+# Or use configs/transformer_xlmr.yaml or configs/transformer_visobert.yaml.
+# A CUDA-compatible PyTorch installation and supported GPU are recommended.
+python -m viabsa.export_onnx --model models/phobert --out models/phobert_onnx --quantize
+python -m viabsa.benchmark --models models/baseline models/phobert models/phobert_onnx
 mlflow ui                         # compare runs
 ```
 
-Any hyper-parameter can be overridden: `python -m viabsa.training.train_transformer --config configs/transformer_phobert.yaml --set training.lr=3e-5 loss.focal_gamma=2`.
+Any hyper-parameter can be overridden, for example:
+`python -m viabsa.training.train_transformer --config configs/transformer_phobert.yaml --set training.lr=3e-5 loss.focal_gamma=2`.
 
 ### Docker
 
+First prepare the data and train the baseline as described above; Docker Compose mounts the local
+`models/` folder and the trained model is not included in the image.
+
 ```bash
-make docker-up                    # API :8000 + Streamlit :8501, models/ mounted read-only
-MODEL_DIR=phobert_onnx docker compose up   # serve another model directory
+docker compose up --build
 ```
+
+The API is available at `http://localhost:8000/docs` and Streamlit at `http://localhost:8501`.
+To serve a different model directory, set `MODEL_DIR` to a folder under `models/` before starting
+Compose (for example, in PowerShell: `$env:MODEL_DIR="phobert_onnx"; docker compose up --build`).
 
 ### API example
 
