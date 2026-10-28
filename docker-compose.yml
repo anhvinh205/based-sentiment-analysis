@@ -1,0 +1,30 @@
+# docker compose up --build   ->  API on :8000, Streamlit on :8501
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: api
+    environment:
+      VIABSA_MODEL_PATH: /app/models/${MODEL_DIR:-baseline}
+    volumes:
+      - ./models:/app/models:ro
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: app
+      args:
+        EXTRAS: app
+    environment:
+      VIABSA_API_URL: http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "8501:8501"
+    restart: unless-stopped

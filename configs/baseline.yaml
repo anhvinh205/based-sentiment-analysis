@@ -1,0 +1,14 @@
+data_dir: data/processed
+out_dir: models/baseline
+reports_dir: reports
+seed: 42
+tfidf:
+  word_ngram: [1, 2]
+  word_max_features: 50000
+  char_ngram: [2, 5]
+  char_max_features: 150000
+  min_df: 2
+logreg:
+  c_grid: [0.5, 2.0, 8.0]   # selected per aspect on the validation set
+  class_weight: balanced
+  max_iter: 400

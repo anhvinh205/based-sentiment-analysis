@@ -1,0 +1,13 @@
+# Data preparation settings (see src/viabsa/data/prepare.py)
+raw_dir: data/raw          # must contain data_train.csv, data_val.csv, data_test.csv
+out_dir: data/processed
+reports_dir: reports       # a copy of data_stats.json is written here
+text_column: data
+cleaning:
+  lowercase: true
+  max_token_len: 25        # tokens longer than this are keyboard-mash noise
+  collapse_repeats: true   # "thichhhh" -> "thich"
+  expand_teencode: true
+dedupe:
+  drop_conflicting: true   # identical text, different labels -> drop all copies
+  remove_cross_split_leakage: true

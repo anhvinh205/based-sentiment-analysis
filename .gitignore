@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Data & artifacts (never commit raw data or trained weights)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+models/*
+!models/.gitkeep
+mlruns/
+mlartifacts/
+*.pt
+*.onnx
+*.joblib
+
+# Misc
+.DS_Store
+.ipynb_checkpoints/
+.env
+
+# Error analysis files quote raw reviews: keep them local
+reports/errors_*.csv

@@ -1,0 +1,28 @@
+name: xlmr
+data_dir: data/processed
+out_dir: models/xlmr
+reports_dir: reports
+seed: 42
+model:
+  backbone: FacebookAI/xlm-roberta-base
+  pooling: cls              # cls | mean
+  dropout: 0.1
+  max_length: 128
+  word_segment: false      # XLM-R uses subword tokenization
+training:
+  epochs: 6
+  batch_size: 32
+  lr: 3e-5
+  head_lr_multiplier: 10    # the freshly initialised heads learn faster than the encoder
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  max_grad_norm: 1.0
+  fp16: true                # used only when CUDA is available
+  patience: 2               # early stopping on validation mean macro-F1
+loss:
+  class_weight_power: 0.5   # 0 = unweighted, 1 = fully inverse-frequency
+  class_weight_max: 10.0
+  focal_gamma: 0.0          # >0 enables focal loss
+tracking:
+  mlflow: true
+  experiment: viabsa

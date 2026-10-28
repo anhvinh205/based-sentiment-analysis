@@ -1,0 +1,183 @@
+{
+  "cleaning": {
+    "lowercase": true,
+    "max_token_len": 25,
+    "collapse_repeats": true,
+    "expand_teencode": true
+  },
+  "per_split": {
+    "train": {
+      "input": 12981,
+      "empty_after_cleaning": 275,
+      "conflicting_texts": 7,
+      "exact_duplicates_removed": 213,
+      "final": 12428,
+      "label_distribution": {
+        "stayingpower": {
+          "none": 10195,
+          "negative": 754,
+          "neutral": 246,
+          "positive": 1233
+        },
+        "texture": {
+          "none": 8492,
+          "negative": 635,
+          "neutral": 428,
+          "positive": 2873
+        },
+        "smell": {
+          "none": 10140,
+          "negative": 339,
+          "neutral": 101,
+          "positive": 1848
+        },
+        "price": {
+          "none": 9802,
+          "negative": 15,
+          "neutral": 22,
+          "positive": 2589
+        },
+        "others": {
+          "none": 10599,
+          "neutral": 1829
+        },
+        "colour": {
+          "none": 6408,
+          "negative": 555,
+          "neutral": 438,
+          "positive": 5027
+        },
+        "shipping": {
+          "none": 8114,
+          "negative": 1328,
+          "neutral": 280,
+          "positive": 2706
+        },
+        "packing": {
+          "none": 10027,
+          "negative": 85,
+          "neutral": 15,
+          "positive": 2301
+        }
+      },
+      "template_share": 0.0698,
+      "gibberish_share": 0.0798
+    },
+    "val": {
+      "input": 1623,
+      "empty_after_cleaning": 27,
+      "conflicting_texts": 3,
+      "exact_duplicates_removed": 17,
+      "final": 1545,
+      "label_distribution": {
+        "stayingpower": {
+          "none": 1281,
+          "negative": 90,
+          "neutral": 31,
+          "positive": 143
+        },
+        "texture": {
+          "none": 1097,
+          "negative": 77,
+          "neutral": 54,
+          "positive": 317
+        },
+        "smell": {
+          "none": 1242,
+          "negative": 52,
+          "neutral": 13,
+          "positive": 238
+        },
+        "price": {
+          "none": 1226,
+          "neutral": 4,
+          "positive": 315
+        },
+        "others": {
+          "none": 1330,
+          "neutral": 215
+        },
+        "colour": {
+          "none": 796,
+          "negative": 53,
+          "neutral": 53,
+          "positive": 643
+        },
+        "shipping": {
+          "none": 972,
+          "negative": 188,
+          "neutral": 36,
+          "positive": 349
+        },
+        "packing": {
+          "none": 1243,
+          "negative": 6,
+          "neutral": 1,
+          "positive": 295
+        }
+      },
+      "template_share": 0.0595,
+      "gibberish_share": 0.0738
+    },
+    "test": {
+      "input": 1623,
+      "empty_after_cleaning": 39,
+      "conflicting_texts": 0,
+      "exact_duplicates_removed": 19,
+      "final": 1534,
+      "label_distribution": {
+        "stayingpower": {
+          "none": 1257,
+          "negative": 96,
+          "neutral": 40,
+          "positive": 141
+        },
+        "texture": {
+          "none": 1042,
+          "negative": 83,
+          "neutral": 64,
+          "positive": 345
+        },
+        "smell": {
+          "none": 1219,
+          "negative": 48,
+          "neutral": 16,
+          "positive": 251
+        },
+        "price": {
+          "none": 1211,
+          "negative": 6,
+          "positive": 317
+        },
+        "others": {
+          "none": 1292,
+          "neutral": 242
+        },
+        "colour": {
+          "none": 810,
+          "negative": 54,
+          "neutral": 51,
+          "positive": 619
+        },
+        "shipping": {
+          "none": 1006,
+          "negative": 173,
+          "neutral": 26,
+          "positive": 329
+        },
+        "packing": {
+          "none": 1250,
+          "negative": 10,
+          "neutral": 2,
+          "positive": 272
+        }
+      },
+      "template_share": 0.0821,
+      "gibberish_share": 0.0913
+    }
+  },
+  "cross_split_leakage_removed": {
+    "val": 20,
+    "test": 31
+  }
+}
