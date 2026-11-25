@@ -89,7 +89,7 @@ def test_onnx_export_feed_ignores_extra_tokenizer_inputs():
     from .test_torch_model import make_tokenizer
 
     tokenizer = make_tokenizer(["son đẹp giao hàng nhanh"])
-    sample = tokenizer(["son đẹp giao hàng nhanh"], return_tensors="pt")
+    sample = tokenizer(["son đẹp giao hàng nhanh"], return_tensors="pt", return_token_type_ids=True)
 
     assert "token_type_ids" in sample
     feed = _onnx_feed(sample)
